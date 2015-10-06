@@ -1,3 +1,0 @@
-= redmine_cybozulive
-
-Description goes here

@@ -5,7 +5,6 @@ require 'cgi'
 class CybozuliveListener < Redmine::Hook::Listener
   include ActionView::Helpers::TextHelper
   include ActionView::Helpers::SanitizeHelper
-  include ApplicationHelper
 
   def controller_issues_new_after_save(context={})
     issue = context[:issue]
@@ -20,7 +19,7 @@ class CybozuliveListener < Redmine::Hook::Listener
 #{I18n.t("field_priority")} : #{CGI.escapeHTML(issue.priority.try(:name))}
 #{I18n.t("field_assigned_to")} : #{CGI.escapeHTML(issue.assigned_to.try(:name))}
 
-#{strip_tags(textilizable(issue, :description)).gsub(/(\r\n|\r|\n)+/, "\n")}
+#{strip_tags(Redmine::WikiFormatting.to_html(Setting.text_formatting, issue.description)).gsub(/(\r\n|\r|\n)+/, "\n")}
     EOF
 
     post_chat(project, message)
@@ -39,7 +38,7 @@ class CybozuliveListener < Redmine::Hook::Listener
 
 #{journal_detail_messages.join("\n")}
 
-#{strip_tags(textilizable(journal, :notes)).gsub(/(\r\n|\r|\n)+/, "\n")}
+#{strip_tags(Redmine::WikiFormatting.to_html(Setting.text_formatting, journal.notes)).gsub(/(\r\n|\r|\n)+/, "\n")}
     EOF
 
     post_chat(project, message)
